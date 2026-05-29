@@ -39,14 +39,12 @@ public class ServiceService {
 
     // ── GET ALL (cached in Redis) ─────────────────────────────────────────────
 
-    @Cacheable(value = "services", key = "'all'")
     public List<ServiceResponse> getAllAvailable() {
         log.info("DB hit: getAllAvailable");
         return serviceRepository.findByIsAvailableTrue()
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    @Cacheable(value = "services", key = "#category.name()")
     public List<ServiceResponse> getByCategory(Category category) {
 
         return serviceRepository
@@ -56,7 +54,6 @@ public class ServiceService {
                 .toList();
     }
 
-    @Cacheable(value = "service", key = "#id")
     public ServiceResponse getById(Long id) {
         return toResponse(serviceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found")));
@@ -78,7 +75,6 @@ public class ServiceService {
     // ── CREATE ────────────────────────────────────────────────────────────────
 
     @Transactional
-    @CacheEvict(value = "services", allEntries = true)
     public ServiceResponse create(ServiceRequest req,String providerEmail) throws IOException {
         User provider = findUser(providerEmail);
 
@@ -97,7 +93,6 @@ public class ServiceService {
     // ── UPDATE ────────────────────────────────────────────────────────────────
 
     @Transactional
-    @CacheEvict(value = {"services", "service"}, allEntries = true)
     public ServiceResponse update(Long id, ServiceRequest req,
                                   MultipartFile image, String providerEmail) throws IOException {
         ServiceEntity service = serviceRepository.findById(id)
@@ -122,7 +117,6 @@ public class ServiceService {
     // ── DELETE ────────────────────────────────────────────────────────────────
 
     @Transactional
-    @CacheEvict(value = {"services", "service"}, allEntries = true)
     public void delete(Long id, String providerEmail) {
         ServiceEntity service = serviceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
