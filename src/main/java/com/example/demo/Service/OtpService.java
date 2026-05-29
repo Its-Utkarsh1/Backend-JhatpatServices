@@ -11,7 +11,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class OtpService {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final Map<String, String> otpStore = new ConcurrentHashMap<>();
     private static final long OTP_EXPIRY = 5;
     private static final String OTP_PREFIX = "otp:";
 
@@ -19,20 +19,20 @@ public class OtpService {
     public String genetateOtp(String email){
         String otp = String.format("%06d", new Random().nextInt(999999));
         String key = OTP_PREFIX + email;
-        stringRedisTemplate.opsForValue().set(key, otp, Duration.ofMinutes(OTP_EXPIRY));
+        otpStore.put(email, otp);
 
         return otp;
     }
 
     public boolean verifyotp(String email, String inputOtp){
-        String key = OTP_PREFIX + email;
-        String storedOtp = stringRedisTemplate.opsForValue().get(key);
-        if(storedOtp == null) return false;
-        if(storedOtp.equals(inputOtp)){
-            stringRedisTemplate.delete(key);
+       String storedOtp = otpStore.get(email);
+
+        if (storedOtp != null && storedOtp.equals(otp)) {
+            otpStore.remove(email);
             return true;
         }
-        return false;
+
+        return false;;
     }
 
 
