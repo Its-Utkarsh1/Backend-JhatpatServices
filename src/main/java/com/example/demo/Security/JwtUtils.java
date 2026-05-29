@@ -25,7 +25,7 @@ public class JwtUtils {
     @Value("${JWT_SECRET}")
     private String jwtSecret;
 
-    @Value("${spring.app.jwtExpirationMs}")
+    @Value("${app.jwtExpirationMs}")
     private int jwtExpiration;
 
     public String getJwtFromHeader(HttpServletRequest request){
