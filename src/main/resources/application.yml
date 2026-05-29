@@ -3,9 +3,9 @@ spring:
     name: Jhatpat
 
   datasource:
-    url: jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require
-    username: postgres.lgylilaimwflakkcasul
-    password: Utkarsh1234@
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -13,16 +13,11 @@ spring:
       ddl-auto: update
     show-sql: true
 
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
   mail:
     host: smtp.gmail.com
     port: 587
-    username: core.utkarsh@gmail.com
-    password: cmuosggsvfprlmca
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
 
     properties:
       mail:
@@ -31,20 +26,12 @@ spring:
           starttls:
             enable: true
 
-  cache:
-    type: redis
-    redis:
-      time-to-live: 600000
-
-  app:
-    jwtSecret: myVeryStrongSecretKeyForJwtAuthentication123456
-    jwtExpirationMs: 86400000
+app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: 86400000
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
-  endpoint:
-    metrics:
-      access: read_only
